@@ -33,13 +33,16 @@ function App() {
       value= {{
         isLoggedIn: isLoggedIn, 
         //This value will be changed automatically by react upon changing login and that new object value will passed down to all listening components
+        onLogout: logoutHandler
       }}
     >  
       {/* No need to use isAuthenticated now as AuthContext can be applicable for all child components */}
-      <MainHeader onLogout={logoutHandler} /> 
+      <MainHeader /> 
       <main>
         {!isLoggedIn && <Login onLogin={loginHandler} />}
         {isLoggedIn && <Home onLogout={logoutHandler} />}
+        {/* we are still passing loginHandler and logoutHandler to onLogin and onLogout directly becoz we are 
+        using both of them in Login.js and Home.js respectively through props. We are not forwarding them */}
       </main>
     </AuthContext.Provider> 
     // Since the default value of isLoggedIn is false in the App.js; 
