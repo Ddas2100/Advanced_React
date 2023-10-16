@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Login from './components/Login/Login';
 import Home from './components/Home/Home';
 import MainHeader from './components/MainHeader/MainHeader';
+import AuthContext from './context (Store)/auth-context';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -27,13 +28,22 @@ function App() {
   };
 
   return (
-    <React.Fragment>
-      <MainHeader isAuthenticated={isLoggedIn} onLogout={logoutHandler} />
+    // Providing Context to wrap components. Now all parent and their children componnets have access to this context
+    <AuthContext.Provider 
+      value= {{
+        isLoggedIn: isLoggedIn, 
+        //This value will be changed automatically by react upon changing login and that new object value will passed down to all listening components
+      }}
+    >  
+      {/* No need to use isAuthenticated now as AuthContext can be applicable for all child components */}
+      <MainHeader onLogout={logoutHandler} /> 
       <main>
         {!isLoggedIn && <Login onLogin={loginHandler} />}
         {isLoggedIn && <Home onLogout={logoutHandler} />}
       </main>
-    </React.Fragment>
+    </AuthContext.Provider> 
+    // Since the default value of isLoggedIn is false in the App.js; 
+    // therefore, AuthContext.Provider may not be necessary. However, it is safer to use.
   );
 }
 
