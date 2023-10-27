@@ -1,8 +1,10 @@
-import React, { useState, useReducer } from 'react';
+import React, { useState, useReducer, useContext } from 'react';
 
 import Card from '../UI/Card/Card';
 import classes from './Login.module.css';
 import Button from '../UI/Button/Button';
+import AuthContext from '../../context (Store)/auth-context';
+import Input from '../UI/Input/Input';
 
 const emailReducer = (state, action) => {
   if (action.type === 'USER_INPUT') {
@@ -39,10 +41,10 @@ const collegeReducer = (state, action) => {
 
 const Login = (props) => {
   // const [enteredEmail, setEnteredEmail] = useState('');
-  // const [emailIsValid, setEmailIsValid] = useState();
+  const [emailIsValid, setEmailIsValid] = useState();
   // const [enteredPassword, setEnteredPassword] = useState('');
-  // const [passwordIsValid, setPasswordIsValid] = useState();
-  // const [collegeIsValid, setCollegeIsValid] = useState();
+  const [passwordIsValid, setPasswordIsValid] = useState();
+  const [collegeIsValid, setCollegeIsValid] = useState();
   // const [enteredCollege, setEnteredCollege] = useState('');
   const [formIsValid, setFormIsValid] = useState(false);
 
@@ -60,6 +62,8 @@ const Login = (props) => {
     value: '',
     isValid: null,
   });
+
+  const authCtx = useContext(AuthContext);
 
   // useEffect(() => {
   //   const identifier = setTimeout(() => {  // Debouncing
@@ -112,41 +116,33 @@ const Login = (props) => {
 
   const submitHandler = (event) => {
     event.preventDefault();
-    props.onLogin(emailState.value, passwordState.value, collegeState.value);
+    authCtx.onLogin(emailState.value, passwordState.value, collegeState.value);
   };
 
   return (
     <Card className={classes.login}>
       <form onSubmit={submitHandler}>
-        <div
-          className={`${classes.control} ${
-            emailState.isValid === false ? classes.invalid : ''
-          }`}
-        >
-          <label htmlFor="email">E-Mail</label>
-          <input
-            type="email"
-            id="email"
-            value={emailState.value}
-            onChange={emailChangeHandler}
-            onBlur={validateEmailHandler}
-          />
-        </div>
-        <div
-          className={`${classes.control} ${
-            passwordState.isValid === false ? classes.invalid : ''
-          }`}
-        >
-          <label htmlFor="password">Password</label>
-          <input
-            type="password"
-            id="password"
-            value={passwordState.value}
-            onChange={passwordChangeHandler}
-            onBlur={validatePasswordHandler}
-          />
-        </div>
-        <div
+      {/* create a reusable Input component which could replace the current input elements which take email and password.
+      The new component should take all the data as props. */}
+        <Input
+          id= "email"
+          label= "E-Mail"
+          type= "email"
+          isValid= {emailIsValid}
+          value= {emailState.value}
+          onChange= {emailChangeHandler}
+          onBlur= {validateEmailHandler}
+        />
+        <Input
+          id= "password"
+          label= "Password"
+          type= "password"
+          isValid= {passwordIsValid}
+          value= {passwordState.value}
+          onChange= {passwordChangeHandler}
+          onBlur= {validatePasswordHandler}
+        />
+        {/* <div
           className={`${classes.control} ${
             collegeState.isValid === false ? classes.invalid : ''
           }`}
@@ -159,7 +155,17 @@ const Login = (props) => {
             onChange={collegeChangeHandler}
             onBlur={validateCollegeHandler}
           />
-        </div>
+        </div> */}
+
+        <Input
+          id= "college"
+          label= "College Name"
+          type= "text"
+          isValid= {collegeIsValid}
+          value= {collegeState.value}
+          onChange= {collegeChangeHandler}
+          onBlur= {validateCollegeHandler}
+        />
         <div className={classes.actions}>
           <Button type="submit" className={classes.btn} disabled={!formIsValid}>
             Login
