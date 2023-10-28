@@ -1,4 +1,4 @@
-import React, { useState, useReducer, useContext } from 'react';
+import React, { useState, useReducer, useContext, useRef } from 'react';
 
 import Card from '../UI/Card/Card';
 import classes from './Login.module.css';
@@ -65,6 +65,10 @@ const Login = (props) => {
 
   const authCtx = useContext(AuthContext);
 
+  const emailInputRef= useRef();
+  const passwordInputRef= useRef();
+  const collegeInputRef= useRef();
+
   // useEffect(() => {
   //   const identifier = setTimeout(() => {  // Debouncing
   //     console.log('Checking form validity')
@@ -116,7 +120,15 @@ const Login = (props) => {
 
   const submitHandler = (event) => {
     event.preventDefault();
-    authCtx.onLogin(emailState.value, passwordState.value, collegeState.value);
+    if(formIsValid) {
+      authCtx.onLogin(emailState.value, passwordState.value, collegeState.value);
+    } else if (!emailIsValid) {
+      emailInputRef.current.focus();
+    } else if (!passwordIsValid) {
+      passwordInputRef.current.focus();
+    } else {
+      collegeInputRef.current.focus();
+    }
   };
 
   return (
@@ -125,6 +137,7 @@ const Login = (props) => {
       {/* create a reusable Input component which could replace the current input elements which take email and password.
       The new component should take all the data as props. */}
         <Input
+          ref={emailInputRef}
           id= "email"
           label= "E-Mail"
           type= "email"
@@ -134,6 +147,7 @@ const Login = (props) => {
           onBlur= {validateEmailHandler}
         />
         <Input
+          ref={passwordInputRef}
           id= "password"
           label= "Password"
           type= "password"
@@ -158,6 +172,7 @@ const Login = (props) => {
         </div> */}
 
         <Input
+          ref={collegeInputRef}
           id= "college"
           label= "College Name"
           type= "text"
@@ -167,7 +182,7 @@ const Login = (props) => {
           onBlur= {validateCollegeHandler}
         />
         <div className={classes.actions}>
-          <Button type="submit" className={classes.btn} disabled={!formIsValid}>
+          <Button type="submit" className={classes.btn} >
             Login
           </Button>
         </div>
